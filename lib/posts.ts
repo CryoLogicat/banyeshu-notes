@@ -1,6 +1,5 @@
-import reactMentalModel from "../content/posts/react-mental-model.md?raw";
-import gitRebase from "../content/posts/git-rebase.md?raw";
-import transformerAttention from "../content/posts/transformer-attention.md?raw";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 
 export type Post = {
   slug: string;
@@ -11,8 +10,6 @@ export type Post = {
   readingTime: number;
   content: string;
 };
-
-const sourceFiles = [reactMentalModel, gitRebase, transformerAttention];
 
 function parsePost(source: string): Post {
   const normalized = source.replace(/^\uFEFF/, "").replaceAll("\r\n", "\n");
@@ -37,7 +34,11 @@ function parsePost(source: string): Post {
   };
 }
 
-const posts = sourceFiles.map(parsePost).sort((a, b) => b.date.localeCompare(a.date));
+const notesDirectory = join(process.cwd(), "content", "posts");
+const posts = readdirSync(notesDirectory)
+  .filter((file) => file.endsWith(".md"))
+  .map((file) => parsePost(readFileSync(join(notesDirectory, file), "utf8")))
+  .sort((a, b) => b.date.localeCompare(a.date));
 
 export function getAllPosts() { return posts; }
 export function getPostBySlug(slug: string) { return posts.find((post) => post.slug === slug); }
