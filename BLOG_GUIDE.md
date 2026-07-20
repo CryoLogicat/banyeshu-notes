@@ -182,7 +182,7 @@ readingTime: 8
 6. 点击页面右上角的 **Commit changes...**。
 7. 提交目标选择 `main` 分支。
 8. 确认提交。
-9. 按照第 9 节的方法发布到 `qydu.top/blog/`。
+9. 推送后会自动发布到 `qydu.top/blog/`，可以在 Actions 页面查看进度。
 
 编辑已有文章时，直接打开对应 `.md` 文件，点击铅笔图标进行修改，然后提交即可。
 
@@ -249,14 +249,24 @@ git status
 
 ## 9. 发布到 qydu.top/blog
 
-将文章推送到 `banyeshu-notes` 后，还需要运行主页仓库的合并发布流程：
+将文章推送到 `banyeshu-notes/main` 后，发布会自动进行，不需要再手动操作主页仓库。
 
-1. 打开 [`Deploy Homepage and Blog`](https://github.com/CryoLogicat/qunyaodu.github.io/actions/workflows/pages.yml)。
-2. 点击右侧的 **Run workflow**。
-3. 分支选择 `master`。
-4. 再次点击绿色的 **Run workflow** 按钮。
-5. 等待 `build` 和 `deploy` 两个任务都显示绿色对勾。
-6. 打开 <https://qydu.top/blog/> 检查文章是否出现。
+自动发布顺序如下：
+
+1. `banyeshu-notes` 构建并发布博客项目。
+2. 构建成功后，它会使用专用部署密钥把最新博客版本号写入主页仓库。
+3. 主页仓库收到更新后自动运行 **Deploy Homepage and Blog**。
+4. 主页工作流获取指定版本的博客，将它构建到 `/blog` 路径。
+5. GitHub Pages 发布主页和博客。
+
+可以依次查看两个工作流的进度：
+
+1. [`banyeshu-notes / Deploy GitHub Pages`](https://github.com/CryoLogicat/banyeshu-notes/actions/workflows/pages.yml)
+2. [`qunyaodu.github.io / Deploy Homepage and Blog`](https://github.com/CryoLogicat/qunyaodu.github.io/actions/workflows/pages.yml)
+
+等待两个工作流都显示绿色对勾，再打开 <https://qydu.top/blog/> 检查文章。
+
+如果自动触发失败，可以打开主页的 [`Deploy Homepage and Blog`](https://github.com/CryoLogicat/qunyaodu.github.io/actions/workflows/pages.yml)，点击 **Run workflow**，选择 `master` 后手动运行。
 
 这个工作流会执行以下操作：
 
@@ -274,7 +284,7 @@ git status
 2. 确认 frontmatter 六个字段完整。
 3. 本地运行 `npm run build` 检查，或直接在 GitHub 网页提交。
 4. 将修改推送到 `banyeshu-notes/main`。
-5. 手动运行 `qunyaodu.github.io` 的 **Deploy Homepage and Blog** 工作流。
+5. 等待两个仓库的工作流自动完成，然后打开线上博客检查。
 
 ## 11. 常见问题
 
@@ -287,7 +297,7 @@ git status
 3. frontmatter 是否有上下两行 `---`。
 4. 六个字段是否完整。
 5. 修改是否已经推送到 `banyeshu-notes/main`。
-6. 是否运行了主页仓库的合并发布工作流。
+6. 两个仓库的自动发布工作流是否都成功完成。
 
 ### GitHub Actions 构建失败
 

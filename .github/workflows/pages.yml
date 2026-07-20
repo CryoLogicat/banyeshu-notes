@@ -48,3 +48,28 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  trigger-homepage:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Checkout homepage with dedicated deploy key
+        uses: actions/checkout@v6
+        with:
+          repository: CryoLogicat/qunyaodu.github.io
+          ref: master
+          path: homepage
+          ssh-key: ${{ secrets.HOMEPAGE_DEPLOY_KEY }}
+      - name: Record the published blog version
+        run: |
+          cd homepage
+          printf '%s\n' "$GITHUB_SHA" > .blog-source-sha
+          git add .blog-source-sha
+          if git diff --cached --quiet; then
+            echo "Homepage already references this blog version."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sync blog ${GITHUB_SHA::7}"
+          git push origin master
