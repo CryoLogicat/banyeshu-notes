@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { Markdown } from "../../../components/Markdown";
 import { getAllPosts, getPostBySlug } from "../../../lib/posts";
 
-export function generateStaticParams() { return getAllPosts().map((post) => ({ slug: post.slug })); }
+export function generateStaticParams() {
+  const posts = getAllPosts();
+  return posts.length > 0 ? posts.map((post) => ({ slug: post.slug })) : [{ slug: "_empty" }];
+}
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
