@@ -1,0 +1,29 @@
+---
+slug: my-new-note
+title: 我的新笔记
+description: 用一两句话介绍这篇笔记的内容
+date: 2026-07-20
+category: 学习笔记
+readingTime: 5
+---
+
+这里开始写正文。
+
+## 第一个小节
+
+普通段落可以直接书写。
+
+### 更小的标题
+
+- 列表项目一
+- 列表项目二
+
+> 这里是一段引用。
+
+行内代码可以写成 `const value = 1`。
+
+```ts
+function hello(name: string) {
+  return `Hello, ${name}`;
+}
+```
